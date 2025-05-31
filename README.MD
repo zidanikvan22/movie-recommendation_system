@@ -15,6 +15,7 @@ Untuk mengatasi permasalahan ini, Sistem Rekomendasi (Recommender Systems) hadir
 2. **Nilai Bisnis bagi Platform Digital**
 
   Bagi platform streaming atau penyedia konten film, sistem rekomendasi yang efektif merupakan aset strategis. Sistem ini terbukti mampu meningkatkan metrik bisnis utama seperti user engagement (waktu yang dihabiskan pengguna di platform), retensi pengguna (mencegah pengguna beralih ke platform lain), dan diversifikasi konsumsi konten (mengarahkan pengguna ke berbagai jenis film, bukan hanya blockbuster). Sebagai contoh, Netflix secara terbuka menyatakan bahwa sebagian besar konten yang ditonton oleh penggunanya berasal dari hasil rekomendasi sistem mereka. Demikian pula, platform besar lainnya seperti YouTube dan Amazon sangat mengandalkan sistem rekomendasi untuk mendorong interaksi dan penjualan.
+  
 3. **Pemahaman Mendalam tentang Teknologi Kunci**
 
   Merancang dan mengimplementasikan sistem rekomendasi memberikan pemahaman praktis yang mendalam mengenai berbagai teknik analisis data dan machine learning. Proyek ini secara khusus akan mengeksplorasi dua pendekatan fundamental, yaitu Content Based Filtering (CBF) dan Collaborative Filtering (CF).
