@@ -15,7 +15,6 @@ Untuk mengatasi permasalahan ini, Sistem Rekomendasi (Recommender Systems) hadir
 2. **Nilai Bisnis bagi Platform Digital**
 
   Bagi platform streaming atau penyedia konten film, sistem rekomendasi yang efektif merupakan aset strategis. Sistem ini terbukti mampu meningkatkan metrik bisnis utama seperti user engagement (waktu yang dihabiskan pengguna di platform), retensi pengguna (mencegah pengguna beralih ke platform lain), dan diversifikasi konsumsi konten (mengarahkan pengguna ke berbagai jenis film, bukan hanya blockbuster). Sebagai contoh, Netflix secara terbuka menyatakan bahwa sebagian besar konten yang ditonton oleh penggunanya berasal dari hasil rekomendasi sistem mereka. Demikian pula, platform besar lainnya seperti YouTube dan Amazon sangat mengandalkan sistem rekomendasi untuk mendorong interaksi dan penjualan.
-
 3. **Pemahaman Mendalam tentang Teknologi Kunci**
 
   Merancang dan mengimplementasikan sistem rekomendasi memberikan pemahaman praktis yang mendalam mengenai berbagai teknik analisis data dan machine learning. Proyek ini secara khusus akan mengeksplorasi dua pendekatan fundamental, yaitu Content Based Filtering (CBF) dan Collaborative Filtering (CF).
@@ -69,11 +68,109 @@ Berikut adalah rincian untuk masing-masing file data yang digunakan:
 
 1. **movies_metadata.csv**
 
-  File ini merupakan inti dari informasi film, berisi metadata detail untuk setiap judul.
+  File ini merupakan inti dari informasi film, berisi metadata detail untuk setiap judul. File metadata utama untuk film. Mengandung informasi tentang film yang terdapat dalam dataset Full MovieLens. Fitur yang termasuk di dalamnya meliputi poster, latar belakang, anggaran, pendapatan, tanggal rilis, bahasa, negara produksi, dan perusahaan produksi.
 
   Jumlah Data dan Kondisi Awal: Berisi informasi untuk sekitar 45.466 entri film dengan 24 fitur (kolom) awal. Inspeksi awal menunjukkan beberapa fitur memiliki nilai yang hilang dan beberapa tipe data memerlukan konversi.
 
-  Deskripsi Fitur:
+  Berikut beberapa informasi detail mengenai movies_metadata:
+
+  **Preview**
+
+  ```bash
+  adult	belongs_to_collection	budget	genres	homepage	id	imdb_id	original_language	original_title	overview	...	release_date	revenue	runtime	spoken_languages	status	tagline	title	video	vote_average	vote_count
+  0	False	{'id': 10194, 'name': 'Toy Story Collection', ...	30000000	[{'id': 16, 'name': 'Animation'}, {'id': 35, '...	http://toystory.disney.com/toy-story	862	tt0114709	en	Toy Story	Led by Woody, Andy's toys live happily in his ...	...	1995-10-30	373554033.0	81.0	[{'iso_639_1': 'en', 'name': 'English'}]	Released	NaN	Toy Story	False	7.7	5415.0
+  1	False	NaN	65000000	[{'id': 12, 'name': 'Adventure'}, {'id': 14, '...	NaN	8844	tt0113497	en	Jumanji	When siblings Judy and Peter discover an encha...	...	1995-12-15	262797249.0	104.0	[{'iso_639_1': 'en', 'name': 'English'}, {'iso...	Released	Roll the dice and unleash the excitement!	Jumanji	False	6.9	2413.0
+  2	False	{'id': 119050, 'name': 'Grumpy Old Men Collect...	0	[{'id': 10749, 'name': 'Romance'}, {'id': 35, ...	NaN	15602	tt0113228	en	Grumpier Old Men	A family wedding reignites the ancient feud be...	...	1995-12-22	0.0	101.0	[{'iso_639_1': 'en', 'name': 'English'}]	Released	Still Yelling. Still Fighting. Still Ready for...	Grumpier Old Men	False	6.5	92.0
+  3	False	NaN	16000000	[{'id': 35, 'name': 'Comedy'}, {'id': 18, 'nam...	NaN	31357	tt0114885	en	Waiting to Exhale	Cheated on, mistreated and stepped on, the wom...	...	1995-12-22	81452156.0	127.0	[{'iso_639_1': 'en', 'name': 'English'}]	Released	Friends are the people who let you be yourself...	Waiting to Exhale	False	6.1	34.0
+  4	False	{'id': 96871, 'name': 'Father of the Bride Col...	0	[{'id': 35, 'name': 'Comedy'}]	NaN	11862	tt0113041	en	Father of the Bride Part II	Just when George Banks has recovered from his ...	...	1995-02-10	76578911.0	106.0	[{'iso_639_1': 'en', 'name': 'English'}]	Released	Just When His World Is Back To Normal... He's ...	Father of the Bride Part II	False	5.7	173.0
+  5 rows × 24 columns
+
+  ```
+
+  **Jumlah baris dan kolom**
+
+  ```bash
+  Shape: (45466, 24)
+
+  ```
+
+  **Informasi data**
+
+  ```bash
+  <class 'pandas.core.frame.DataFrame'>
+  RangeIndex: 45466 entries, 0 to 45465
+  Data columns (total 24 columns):
+  #   Column                 Non-Null Count  Dtype  
+  ---  ------                 --------------  -----  
+  0   adult                  45466 non-null  object 
+  1   belongs_to_collection  4494 non-null   object 
+  2   budget                 45466 non-null  object 
+  3   genres                 45466 non-null  object 
+  4   homepage               7782 non-null   object 
+  5   id                     45466 non-null  object 
+  6   imdb_id                45449 non-null  object 
+  7   original_language      45455 non-null  object 
+  8   original_title         45466 non-null  object 
+  9   overview               44512 non-null  object 
+  10  popularity             45461 non-null  object 
+  11  poster_path            45080 non-null  object 
+  12  production_companies   45463 non-null  object 
+  13  production_countries   45463 non-null  object 
+  14  release_date           45379 non-null  object 
+  15  revenue                45460 non-null  float64
+  16  runtime                45203 non-null  float64
+  17  spoken_languages       45460 non-null  object 
+  18  status                 45379 non-null  object 
+  19  tagline                20412 non-null  object 
+  20  title                  45460 non-null  object 
+  21  video                  45460 non-null  object 
+  22  vote_average           45460 non-null  float64
+  23  vote_count             45460 non-null  float64
+  dtypes: float64(4), object(20)
+  memory usage: 8.3+ MB
+
+  ```
+
+  **Jumlah nilai yang hilang**
+
+  ```bash
+  adult	0
+  belongs_to_collection	40972
+  budget	0
+  genres	0
+  homepage	37684
+  id	0
+  imdb_id	17
+  original_language	11
+  original_title	0
+  overview	954
+  popularity	5
+  poster_path	386
+  production_companies	3
+  production_countries	3
+  release_date	87
+  revenue	6
+  runtime	263
+  spoken_languages	6
+  status	87
+  tagline	25054
+  title	6
+  video	6
+  vote_average	6
+  vote_count	6
+
+  dtype: int64
+
+  ```
+
+  **Jumlah duplikasi data**
+
+  ```bash
+  13
+
+  ```
+
+  **Deskripsi Fitur:**
 
   - adult: Indikator boolean (True/False) apakah film ditujukan untuk penonton dewasa.
   - belongs_to_collection: Informasi (dalam format JSON) mengenai seri atau koleksi film jika film tersebut adalah bagian dari waralaba.
@@ -102,11 +199,66 @@ Berikut adalah rincian untuk masing-masing file data yang digunakan:
 
 2. **ratings_small.csv**
 
-  File ini berisi sebagian kecil dari data rating film yang diberikan oleh pengguna. Sangat penting untuk model Collaborative Filtering.
+  File ini berisi sebagian kecil dari data rating film yang diberikan oleh pengguna. Sangat penting untuk model Collaborative Filtering. Subset 100.004 penilaian dari 700 pengguna pada 9.000 film.
 
   Jumlah Data dan Kondisi Awal: Berisi 100.004 entri rating yang mencakup 4 fitur. Data ini relatif bersih dengan tipe data yang umumnya sudah sesuai.
 
-  Deskripsi Fitur:
+  Berikut beberapa informasi detail mengenai ratings_small:
+
+  **Preview**
+
+  ```bash
+    userId	movieId	rating	timestamp
+  0	1	31	2.5	1260759144
+  1	1	1029	3.0	1260759179
+  2	1	1061	3.0	1260759182
+  3	1	1129	2.0	1260759185
+  4	1	1172	4.0	1260759205
+  ```
+
+  **Jumlah baris dan kolom**
+
+  ```bash
+  Shape: (100004, 4)
+
+  ```
+
+  **Informasi data**
+
+  ```bash
+  <class 'pandas.core.frame.DataFrame'>
+  RangeIndex: 100004 entries, 0 to 100003
+  Data columns (total 4 columns):
+  #   Column     Non-Null Count   Dtype  
+  ---  ------     --------------   -----  
+  0   userId     100004 non-null  int64  
+  1   movieId    100004 non-null  int64  
+  2   rating     100004 non-null  float64
+  3   timestamp  100004 non-null  int64  
+  dtypes: float64(1), int64(3)
+  memory usage: 3.1 MB
+
+  ```
+
+  **Jumlah nilai yang hilang**
+
+  ```bash
+  userId	0
+  movieId	0
+  rating	0
+  timestamp	0
+
+  dtype: int64
+  ```
+
+  **Jumlah duplikasi data**
+
+  ```bash
+  0
+
+  ```
+
+  **Deskripsi Fitur:**
   - userId: ID unik untuk setiap pengguna yang memberikan rating.
   - movieId: ID unik untuk setiap film yang dirating (berkaitan dengan id di file lain melalui links_small.csv).
   - rating: Nilai rating yang diberikan pengguna (skala 0.5 hingga 5.0).
@@ -114,32 +266,190 @@ Berikut adalah rincian untuk masing-masing file data yang digunakan:
 
 3. **keywords.csv**
 
-  File ini mengandung kata kunci yang relevan dengan tema atau elemen penting dari setiap film.
+  File ini mengandung kata kunci yang relevan dengan tema atau elemen penting dari setiap film. Berisi kata kunci alur cerita film untuk film-film MovieLens kami. Tersedia dalam bentuk objek JSON yang diubah menjadi string.
 
   Jumlah Data dan Kondisi Awal: Berisi data kata kunci untuk sekitar 46.419 film dengan 2 fitur. Kolom keywords memerlukan parsing dari format JSON. Ditemukan adanya duplikasi id film.
 
-  Deskripsi Fitur:
+  Berikut beberapa informasi detail mengenai keywords:
+
+  **Preview**
+
+  ```bash
+  id	keywords
+  0	862	[{'id': 931, 'name': 'jealousy'}, {'id': 4290,...
+  1	8844	[{'id': 10090, 'name': 'board game'}, {'id': 1...
+  2	15602	[{'id': 1495, 'name': 'fishing'}, {'id': 12392...
+  3	31357	[{'id': 818, 'name': 'based on novel'}, {'id':...
+  4	11862	[{'id': 1009, 'name': 'baby'}, {'id': 1599, 'n...
+
+  ```
+
+  **Jumlah baris dan kolom**
+
+  ```bash
+  Shape: (46419, 2)
+
+  ```
+
+  **Informasi data**
+
+  ```bash
+  <class 'pandas.core.frame.DataFrame'>
+  RangeIndex: 46419 entries, 0 to 46418
+  Data columns (total 2 columns):
+  #   Column    Non-Null Count  Dtype 
+  ---  ------    --------------  ----- 
+  0   id        46419 non-null  int64 
+  1   keywords  46419 non-null  object
+  dtypes: int64(1), object(1)
+  memory usage: 725.4+ KB
+
+  ```
+
+  **Jumlah nilai yang hilang**
+
+  ```bash
+  id	0
+  keywords	0
+  dtype: int64
+  ```
+
+  **Jumlah duplikasi data**
+
+  ```bash
+  987
+
+  ```
+
+  **Deskripsi Fitur:**
   - id: ID unik film (TMDB ID, untuk digabungkan dengan movies_metadata.csv).
   - keywords: Daftar kata kunci atau istilah yang relevan dengan film (dalam format JSON).
 
 4. **credits.csv**
 
-  File ini menyimpan informasi mengenai aktor (cast) dan kru produksi (crew) yang terlibat dalam setiap film.
+  File ini menyimpan informasi mengenai aktor (cast) dan kru produksi (crew) yang terlibat dalam setiap film. Berisi informasi pemeran dan kru untuk semua film kami. Tersedia dalam bentuk objek JSON yang diubah menjadi string.
 
   Jumlah Data dan Kondisi Awal: Berisi data kredit untuk sekitar 45.476 film dengan 3 fitur. Kolom cast dan crew memerlukan parsing dari format JSON. Ditemukan adanya duplikasi id film.
 
-  Deskripsi Fitur:
+  Berikut beberapa informasi detail mengenai credits:
+
+  **Preview**
+
+  ```bash
+  cast	crew	id
+  0	[{'cast_id': 14, 'character': 'Woody (voice)',...	[{'credit_id': '52fe4284c3a36847f8024f49', 'de...	862
+  1	[{'cast_id': 1, 'character': 'Alan Parrish', '...	[{'credit_id': '52fe44bfc3a36847f80a7cd1', 'de...	8844
+  2	[{'cast_id': 2, 'character': 'Max Goldman', 'c...	[{'credit_id': '52fe466a9251416c75077a89', 'de...	15602
+  3	[{'cast_id': 1, 'character': "Savannah 'Vannah...	[{'credit_id': '52fe44779251416c91011acb', 'de...	31357
+  4	[{'cast_id': 1, 'character': 'George Banks', '...	[{'credit_id': '52fe44959251416c75039ed7', 'de...	11862
+
+  ```
+
+  **Jumlah baris dan kolom**
+
+  ```bash
+  Shape: (45476, 3)
+
+  ```
+
+  **Informasi data**
+
+  ```bash
+  <class 'pandas.core.frame.DataFrame'>
+  RangeIndex: 45476 entries, 0 to 45475
+  Data columns (total 3 columns):
+  #   Column  Non-Null Count  Dtype 
+  ---  ------  --------------  ----- 
+  0   cast    45476 non-null  object
+  1   crew    45476 non-null  object
+  2   id      45476 non-null  int64 
+  dtypes: int64(1), object(2)
+  memory usage: 1.0+ MB
+
+  ```
+
+  **Jumlah nilai yang hilang**
+
+  ```bash
+  cast	0
+  crew	0
+  id	0
+
+  dtype: int64
+  ```
+
+  **Jumlah duplikasi data**
+
+  ```bash
+  37
+
+  ```
+
+  **Deskripsi Fitur:**
   - cast: Informasi daftar pemeran dalam film, termasuk nama aktor/aktris dan karakter (dalam format JSON).
   - crew: Informasi anggota kru produksi, termasuk sutradara, produser, penulis naskah, dll. (dalam format JSON).
   - id: ID unik film (TMDB ID, untuk digabungkan dengan movies_metadata.csv).
 
 5. **links_small.csv**
 
-  File ini berfungsi sebagai penghubung antara berbagai sistem ID film, khususnya antara movieId yang digunakan dalam ratings_small.csv dengan tmdbId.
+  File ini berfungsi sebagai penghubung antara berbagai sistem ID film, khususnya antara movieId yang digunakan dalam ratings_small.csv dengan tmdbId. Berisi ID TMDB dan IMDB dari subset kecil 9.000 film dari dataset lengkap.
 
   Jumlah Data dan Kondisi Awal: Berisi link ID untuk sekitar 9.125 film dengan 3 fitur. Kolom tmdbId memiliki beberapa nilai yang hilang dan bertipe float, memerlukan konversi ke integer.
 
-  Deskripsi Fitur:
+  Berikut beberapa informasi detail mengenai credits:
+
+  **Preview**
+
+  ```bash
+  movieId	imdbId	tmdbId
+  0	1	114709	862.0
+  1	2	113497	8844.0
+  2	3	113228	15602.0
+  3	4	114885	31357.0
+  4	5	113041	11862.0
+  ```
+
+  **Jumlah baris dan kolom**
+
+  ```bash
+  Shape: (9125, 3)
+
+  ```
+
+  **Informasi data**
+
+  ```bash
+  <class 'pandas.core.frame.DataFrame'>
+  RangeIndex: 9125 entries, 0 to 9124
+  Data columns (total 3 columns):
+  #   Column   Non-Null Count  Dtype  
+  ---  ------   --------------  -----  
+  0   movieId  9125 non-null   int64  
+  1   imdbId   9125 non-null   int64  
+  2   tmdbId   9112 non-null   float64
+  dtypes: float64(1), int64(2)
+  memory usage: 214.0 KB
+
+  ```
+
+  **Jumlah nilai yang hilang**
+
+  ```bash
+  movieId	0
+  imdbId	0
+  tmdbId	13
+
+  dtype: int64
+  ```
+
+  **Jumlah duplikasi data**
+
+  ```bash
+  0
+
+  ```
+
+  **Deskripsi Fitur:**
   - movieId: ID unik film yang digunakan dalam dataset MovieLens (termasuk ratings_small.csv).
   - imdbId: ID unik dari IMDb.
   - tmdbId: ID unik dari TMDB (The Movie Database), yang setara dengan kolom id pada movies_metadata.csv, keywords.csv, dan credits.csv.
