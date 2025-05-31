@@ -148,7 +148,7 @@ Berikut adalah rincian untuk masing-masing file data yang digunakan:
 
 **Visualisasi Distribusi Rating Pengguna**
 
-![RP](RP.png)
+![RP](image/RP.png)
 
 - Rating Paling Umum: Rating 4.0 adalah yang paling sering diberikan, dengan jumlah mendekati 29.000.
 - Rating Umum Lainnya: Rating 3.0 juga sangat umum, dengan jumlah sekitar 20.000. Rating 5.0 juga cukup tinggi, sekitar 15.000.
@@ -163,7 +163,7 @@ Berikut adalah rincian untuk masing-masing file data yang digunakan:
 
 **Visualisasi Distribusi Popularitas Film**
 
-![DPF](DPF.png)
+![DPF](image/DPF.png)
 
 Sangat Condong ke Kanan (Right-Skewed/Positively Skewed): Distribusi ini sangat tidak simetris dan condong ke kanan. Ini berarti:
   - Mayoritas Film Memiliki Popularitas Rendah: Sebagian besar film (jumlah tertinggi) memiliki skor popularitas yang sangat rendah, terkonsentrasi di dekat nilai 0.
@@ -176,7 +176,7 @@ Sangat Condong ke Kanan (Right-Skewed/Positively Skewed): Distribusi ini sangat 
 
 **Visualisasi Distribusi Rata-Rata Vote Film**
 
-![DRRVF](DRRVF.png)
+![DRRVF](image/DRRVF.png)
 
   - Bimodal (Dua Puncak): Distribusi ini menunjukkan dua puncak yang jelas (bimodal):
     - Puncak Pertama (Sangat Rendah): Ada sejumlah signifikan film (sekitar 3000 film) yang memiliki rata-rata vote sangat dekat dengan 0. Ini bisa berarti film-film ini mungkin baru, belum banyak mendapat vote, atau memang mendapatkan vote yang sangat rendah.
@@ -188,7 +188,7 @@ Sangat Condong ke Kanan (Right-Skewed/Positively Skewed): Distribusi ini sangat 
 
 **Visualisasi Frekuensi Genre**
 
-![FGF](FGF.png)
+![FGF](image/FGF.png)
 
   - Drama: Masih menjadi genre yang paling dominan dengan jumlah film mendekati 20.000.
   - Comedy: Genre kedua paling umum, dengan jumlah sekitar 13.000 - 13.500 film.
@@ -200,7 +200,7 @@ Sangat Condong ke Kanan (Right-Skewed/Positively Skewed): Distribusi ini sangat 
 
 **Visualisasi Tahun Rilis Film**
 
-![DJFBTR](DJFBTR.png)
+![DJFBTR](image/DJFBTR.png)
 
   - Awal Abad ke-20 (1900 - ~1930-an): Jumlah film yang dirilis sangat sedikit. Batang-batang histogram di periode ini sangat pendek, menunjukkan produksi film yang masih terbatas.
   - Pertengahan Abad ke-20 (~1940-an - ~1980-an): Terjadi peningkatan jumlah film yang dirilis secara bertahap namun lambat. Masih ada fluktuasi, tetapi tren umumnya meningkat. Jumlah film per tahun umumnya masih di bawah 1000.
@@ -967,16 +967,16 @@ Metrik yang Digunakan:
 
 1. Root Mean Squared Error (RMSE): Mengukur rata-rata magnitudo kesalahan prediksi rating. Nilai yang lebih rendah menunjukkan akurasi yang lebih baik.
 
-  ![RMSE](RMSE.png)
+  ![RMSE](image/RMSE.png)
 
-  ![RMSE1](RMSE1.png)
+  ![RMSE1](image/RMSE1.png)
                 
 
 2. Mean Absolute Error (MAE): Mengukur rata-rata besarnya kesalahan absolut antara rating prediksi dan rating aktual. Nilai yang lebih rendah menunjukkan akurasi yang lebih baik.
 
-  ![MAE](MAE.png)
+  ![MAE](image/MAE.png)
 
-  ![MAE1](MAE1.png)
+  ![MAE1](image/MAE1.png)
 
 
 ```bash
