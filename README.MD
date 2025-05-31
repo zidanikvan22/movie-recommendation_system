@@ -998,8 +998,8 @@ MAE untuk model SVD: 0.6953813447563785
 Hasil Proyek Berdasarkan Metrik:
 
 - Model SVD awal (dengan parameter default) yang dilatih pada trainset dan diuji pada testset dari ratings_small.csv menghasilkan:
-    - RMSE: sekitar 0.9023
-    - MAE: sekitar 0.6953
+    - RMSE: sekitar 0.9024
+    - MAE: sekitar 0.6954
 - Interpretasi: Nilai RMSE dan MAE ini, pada skala rating 0.5 hingga 5.0, menunjukkan bahwa rata-rata, prediksi model meleset kurang dari satu poin rating dari nilai sebenarnya. Ini adalah hasil yang cukup baik dan layak untuk baseline model SVD pada dataset ini.
 - Contoh rekomendasi Top-N yang dihasilkan untuk pengguna tertentu menampilkan film-film yang cenderung populer dan memiliki rating tinggi secara umum, yang menunjukkan kemampuan model untuk menangkap pola preferensi.
 
@@ -1026,5 +1026,5 @@ Evaluasi kualitatif dan presisi berbasis fitur (genre) menunjukkan bahwa model C
 Pengembangan Model Collaborative Filtering (CF):
 
 Menggunakan library surprise, model Singular Value Decomposition (SVD) berhasil dilatih pada dataset ratings_small.csv.
-Evaluasi awal pada test set menunjukkan performa yang cukup baik dengan RMSE sekitar 0.9023 dan MAE sekitar 0.6953, yang mengindikasikan bahwa model dapat memprediksi rating pengguna dengan tingkat kesalahan yang masuk akal. 
+Evaluasi awal pada test set menunjukkan performa yang cukup baik dengan RMSE sekitar 0.9024 dan MAE sekitar 0.6954, yang mengindikasikan bahwa model dapat memprediksi rating pengguna dengan tingkat kesalahan yang masuk akal. 
 Fungsi rekomendasi Top-N untuk pengguna tertentu berdasarkan model SVD juga berhasil diimplementasikan, menunjukkan kemampuannya untuk menyarankan film yang mungkin disukai pengguna berdasarkan pola rating historis.
