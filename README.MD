@@ -1121,6 +1121,124 @@ print(final_movies_df.columns)
 
 ```
 
+**Pembuatan Content Soup & TF-IDF Vectorization untuk Content Based Filtering**
+
+Semua fitur fitur-fitur tekstual dan kategorikal digabung menjadi satu string teks (disebut soup) yang mencerminkan karakteristik unik dari masing-masing film.
+
+```python
+# Kolom yang akan digunakan
+features_for_soup = {
+    'overview': 'string',
+    'tagline': 'string',
+    'genre_names_refined': 'list',
+    'keyword_names': 'list',
+    'director_name': 'string_person_name',
+    'actor_names': 'list_person_name',
+    'collection_name': 'string_collection_name'
+}
+
+# Fungsi untuk membersihkan nama (hapus spasi dan lowercase)
+def clean_name(name):
+    if isinstance(name, str):
+        return name.lower().replace(' ', '')
+    return ''
+
+# Fungsi untuk memproses list nama (ambil top N, bersihkan)
+def process_list_of_names(name_list, top_n=3):
+    if isinstance(name_list, list):
+        cleaned_names = [clean_name(name) for name in name_list[:top_n] if isinstance(name, str)]
+        return ' '.join(cleaned_names)
+    return ''
+
+# Membuat 'content soup'
+def create_content_soup(row):
+    soup_parts = []
+
+    # Overview and Tagline (sudah string, tinggal lowercase)
+    if isinstance(row['overview'], str):
+        soup_parts.append(row['overview'].lower())
+    if isinstance(row['tagline'], str):
+        soup_parts.append(row['tagline'].lower())
+
+    # Genres (list of strings, join dan lowercase)
+    if isinstance(row['genre_names_refined'], list):
+        soup_parts.append(' '.join([g.lower().replace(' ', '') for g in row['genre_names_refined']]))
+
+    # Keywords (list of strings, join dan lowercase)
+    if isinstance(row['keyword_names'], list):
+        soup_parts.append(' '.join([k.lower().replace(' ', '') for k in row['keyword_names']]))
+
+    # Director (string, clean name)
+    if 'director_name' in row and pd.notna(row['director_name']):
+        soup_parts.append(clean_name(row['director_name']))
+
+    # Actors (list of strings, ambil top 3, clean names)
+    if 'actor_names' in row and isinstance(row['actor_names'], list):
+        soup_parts.append(process_list_of_names(row['actor_names'], top_n=3))
+
+    # Collection Name (string, clean name)
+    if 'collection_name' in row and pd.notna(row['collection_name']) and row['collection_name']: # Cek juga string tidak kosong
+        soup_parts.append(clean_name(row['collection_name']))
+
+    return ' '.join(filter(None, soup_parts)) # Gabungkan semua bagian, filter string kosong
+
+# Daftar kolom yang dibutuhkan oleh create_content_soup
+required_soup_cols = ['overview', 'tagline', 'genre_names_refined', 'keyword_names',
+                      'director_name', 'actor_names', 'collection_name']
+
+# Mengecek apakah semua kolom yang dibutuhkan ada
+missing_cols = [col for col in required_soup_cols if col not in final_movies_df.columns]
+if missing_cols:
+    print(f"Peringatan: Kolom berikut tidak ditemukan di final_movies_df dan dibutuhkan untuk soup: {missing_cols}")
+else:
+    print("Semua kolom yang dibutuhkan untuk soup ditemukan. Membuat kolom 'soup'...")
+    final_movies_df['soup'] = final_movies_df.apply(create_content_soup, axis=1)
+
+    print("\nContoh 'soup' untuk beberapa film:")
+    for i in range(5):
+        print(f"\nFilm: {final_movies_df.iloc[i]['title']}")
+        print(f"Soup: {final_movies_df.iloc[i]['soup'][:500]}...") # Tampilkan 500 karakter pertama
+```
+
+Mengubah soup dari setiap film menjadi representasi numerik menggunakan teknik TF-IDF (Term Frequency-Inverse Document Frequency), sehingga memungkinkan penghitungan kemiripan antar film.
+
+```python
+print("Memulai proses TF-IDF Vectorization...")
+
+# Inisialisasi TfidfVectorizer
+tfidf = TfidfVectorizer(stop_words='english')
+
+# Mengganti NaN atau nilai non-string di 'soup' dengan string kosong (seharusnya sudah ditangani, tapi sebagai pencegahan)
+final_movies_df['soup'] = final_movies_df['soup'].fillna('')
+
+# Membuat matriks TF-IDF dengan menerapkan fit_transform pada kolom 'soup'
+tfidf_matrix = tfidf.fit_transform(final_movies_df['soup'])
+
+# tfidf_matrix sekarang adalah matriks sparse yang berisi bobot TF-IDF untuk setiap kata di setiap film.
+print(f"Shape dari matriks TF-IDF: {tfidf_matrix.shape}")
+
+```
+
+**Konversi Dataset ke Format Surprise | Split Data ke Train dan Test Set untuk Collaborative Filtering**
+
+Dataset ratings dikonversi ke format Dataset dari surprise menggunakan objek Reader, yang memungkinkan sistem mengenali struktur data dan skala rating (0.5–5.0). Ini diperlukan untuk dapat digunakan dalam pelatihan model.
+
+```python
+reader = Reader(rating_scale=(0.5, 5.0))
+
+data_surprise = Dataset.load_from_df(ratings[['userId', 'movieId', 'rating']], reader)
+
+print("Data berhasil dimuat ke dalam format surprise Dataset.")
+```
+
+Data dibagi menjadi train set (80%) dan test set (20%) menggunakan train_test_split. Ini bertujuan untuk menguji performa model secara adil.
+
+```python
+trainset, testset = train_test_split(data_surprise, test_size=0.2, random_state=42)
+
+print(f"Jumlah data rating di trainset: {trainset.n_ratings}")
+print(f"Jumlah data rating di testset: {len(testset)}")
+```
 
 ## Modeling
 
@@ -1130,9 +1248,15 @@ Pada tahapan ini, telah dikembangkan dua jenis model sistem rekomendasi untuk me
 
 **Deskripsi Algoritma:**
 
-Pendekatan Content-Based Filtering (CBF) merekomendasikan film berdasarkan kemiripan intrinsik antar film. Kemiripan ini dihitung dari fitur-fitur konten yang mendeskripsikan setiap film. Dalam proyek ini, fitur-fitur yang digunakan meliputi: sinopsis (overview), tagline, genre (genre_names_refined), kata kunci (keyword_names), nama sutradara (director_name), dan tiga aktor utama (actor_names), serta nama koleksi film (collection_name). Fitur-fitur ini pertama-tama diproses (misalnya, diubah menjadi huruf kecil, spasi dihilangkan untuk nama orang/entitas) dan digabungkan menjadi satu teks tunggal untuk setiap film yang disebut "content soup".
+Pendekatan Content-Based Filtering (CBF) merekomendasikan film berdasarkan kemiripan intrinsik antar film. Kemiripan ini dihitung dari fitur-fitur konten yang mendeskripsikan setiap film. Dalam proyek ini, fitur-fitur yang digunakan meliputi: sinopsis (overview), tagline, genre (genre_names_refined), kata kunci (keyword_names), nama sutradara (director_name), dan tiga aktor utama (actor_names), serta nama koleksi film (collection). 
 
-Selanjutnya, teknik Term Frequency-Inverse Document Frequency (TF-IDF) diterapkan pada "content soup" untuk mengubahnya menjadi representasi vektor numerik. Matriks TF-IDF ini menangkap pentingnya setiap kata/istilah dalam konteks masing-masing film dan keseluruhan dataset. Akhirnya, untuk menghasilkan rekomendasi, kemiripan antar film dihitung secara on-the-fly menggunakan metrik Cosine Similarity antara vektor TF-IDF film input dengan semua film lainnya.
+get_content_based_recommendations, yang menjadi inti dari logika sistem dalam menghasilkan rekomendasi film. Fungsi ini dimulai dengan menerima judul film sebagai input, kemudian menggunakan pemetaan indeks (indices) untuk menemukan posisi baris yang sesuai pada dataset. Indeks ini digunakan untuk mengakses representasi vektor TF-IDF film dalam tfidf_matrix_input dan metadata film dari df_input.
+
+Setelah indeks ditemukan, sistem mengambil vektor TF-IDF dari film input tersebut. Vektor ini merepresentasikan konten film dalam bentuk numerik, yang telah diolah sebelumnya menggunakan metode TF-IDF. Representasi ini memungkinkan perbandingan antar film berdasarkan kemiripan kontennya.
+
+Selanjutnya, sistem menghitung tingkat kemiripan antara film input dan semua film lainnya menggunakan metrik Cosine Similarity. Perhitungan ini dilakukan secara langsung saat pengguna meminta rekomendasi, menghasilkan skor kemiripan untuk setiap film terhadap film input. Skor ini mencerminkan seberapa mirip konten antar film secara matematis.
+
+Setelah semua skor dihitung, sistem mengurutkannya dari yang tertinggi ke terendah, lalu memilih sejumlah film dengan skor tertinggi sebagai rekomendasi (misalnya 10 film). Akhirnya, sistem mengambil judul-judul film dari df_input berdasarkan indeks film yang paling mirip dan mengembalikannya sebagai daftar rekomendasi yang dipersonalisasi untuk pengguna.
 
 **Output Top-N Rekomendasi:**
 ```bash
@@ -1325,12 +1449,10 @@ Pada tahap Pemahaman Data, dilakukan inspeksi awal terhadap semua file CSV yang 
 
 Analisis Data Eksploratif (EDA): Melalui EDA, kita mendapatkan wawasan berharga mengenai distribusi rating, popularitas film, frekuensi genre, aktivitas pengguna dalam memberikan rating, serta tren film berdasarkan tahun rilis. Temuan ini membantu dalam pengambilan keputusan selama persiapan data dan pemodelan.
 
-Tahap Persiapan Data kemudian difokuskan pada pembersihan dan transformasi data secara ekstensif. Proses ini meliputi penanganan nilai yang hilang, konversi tipe data ke format yang sesuai, penghapusan data duplikat, serta parsing informasi detail dari kolom-kolom berformat kompleks (seperti genre, kata kunci, aktor, dan sutradara). Berbagai DataFrame sumber berhasil digabungkan menjadi satu DataFrame utama, final_movies_df, yang bersih dan kaya fitur (berisi ~45.000 film).
+Tahap Persiapan Data kemudian difokuskan pada pembersihan dan transformasi data secara ekstensif. Proses ini meliputi penanganan nilai yang hilang, konversi tipe data ke format yang sesuai, penghapusan data duplikat, serta parsing informasi detail dari kolom-kolom berformat kompleks (seperti genre, kata kunci, aktor, dan sutradara). Berbagai DataFrame sumber berhasil digabungkan menjadi satu DataFrame utama, final_movies_df, yang bersih dan kaya fitur (berisi ~45.000 film). Sebuah "content soup" berhasil dibuat untuk setiap film dengan menggabungkan fitur-fitur tekstual dan kategorikal seperti sinopsis (overview), tagline, genre, kata kunci, koleksi, nama sutradara, dan aktor utama. Matriks TF-IDF digunakan untuk mengubah "soup" ini menjadi representasi vektor numerik.
 
 Pengembangan Model Content-Based Filtering (CBF):
 
-Sebuah "content soup" berhasil dibuat untuk setiap film dengan menggabungkan fitur-fitur tekstual dan kategorikal seperti sinopsis (overview), tagline, genre, kata kunci, koleksi, nama sutradara, dan aktor utama.
-Matriks TF-IDF digunakan untuk mengubah "soup" ini menjadi representasi vektor numerik.
 Fungsi rekomendasi berhasil dibuat yang menghitung cosine similarity secara on-the-fly antara film input dan semua film lain, lalu menghasilkan daftar top-N film yang paling mirip.
 Evaluasi kualitatif dan presisi berbasis fitur (genre) menunjukkan bahwa model CBF mampu memberikan rekomendasi yang sangat relevan untuk beberapa film (misalnya, presisi 100% untuk "The Dark Knight" dalam mencocokkan genre, dan 80% untuk "Toy Story").
 
