@@ -1248,7 +1248,7 @@ Pada tahapan ini, telah dikembangkan dua jenis model sistem rekomendasi untuk me
 
 **Deskripsi Algoritma:**
 
-Pendekatan Content-Based Filtering (CBF) merekomendasikan film berdasarkan kemiripan intrinsik antar film. Kemiripan ini dihitung dari fitur-fitur konten yang mendeskripsikan setiap film. Dalam proyek ini, fitur-fitur yang digunakan meliputi: sinopsis (overview), tagline, genre (genre_names_refined), kata kunci (keyword_names), nama sutradara (director_name), dan tiga aktor utama (actor_names), serta nama koleksi film (collection). 
+Pendekatan Content-Based Filtering (CBF) merekomendasikan film berdasarkan kemiripan intrinsik antar film. Kemiripan ini dihitung dari fitur-fitur konten yang mendeskripsikan setiap film. Dalam proyek ini, fitur-fitur yang digunakan meliputi: sinopsis (overview), tagline, genre (genre_names_refined), kata kunci (keyword_names), nama sutradara (director_name), dan tiga aktor utama (actor_names), serta nama koleksi film (collection_name). 
 
 get_content_based_recommendations, yang menjadi inti dari logika sistem dalam menghasilkan rekomendasi film. Fungsi ini dimulai dengan menerima judul film sebagai input, kemudian menggunakan pemetaan indeks (indices) untuk menemukan posisi baris yang sesuai pada dataset. Indeks ini digunakan untuk mengakses representasi vektor TF-IDF film dalam tfidf_matrix_input dan metadata film dari df_input.
 
